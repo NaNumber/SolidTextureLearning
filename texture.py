@@ -101,6 +101,17 @@ class Texture3D:
 		return False
 
 
+def createRandomTexture(size, n_rocks):
+	newTexture = Texture3D()
+	while len(newTexture.rocks) <= n_rocks:
+		newTexture.add(rock.randomRock3D(size))
+	return newTexture
+ 
+
+
+
+
+
 
 
 

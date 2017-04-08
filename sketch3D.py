@@ -26,7 +26,9 @@ last_y = 0
 x_rot = 0
 y_rot = 0
 
-mTexture = texture.Texture3D()
+#mTexture = texture.Texture3D()
+mTexture = texture.createRandomTexture(500, 50)
+originalTexture = mTexture
 
 def sketch(pTexture=None):
     if pTexture != None:
@@ -45,6 +47,12 @@ def sketch(pTexture=None):
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_LIGHTING)
     glEnable(GL_NORMALIZE)
+    glEnable(GL_CLIP_PLANE0)
+    glEnable(GL_CLIP_PLANE1)
+    glEnable(GL_CLIP_PLANE2)
+    glEnable(GL_CLIP_PLANE3)
+    glEnable(GL_CLIP_PLANE4)
+    glEnable(GL_CLIP_PLANE5)
     lightZeroPosition = [100,50,100,1.]
     lightZeroColor = [0.8,1.0,0.8,1.0] #green tinged
     glLightfv(GL_LIGHT0, GL_POSITION, lightZeroPosition)
@@ -75,6 +83,12 @@ def display():
     global new_rotation
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glClipPlane(GL_CLIP_PLANE0, [ 1., 0., 0., 251.]);
+    glClipPlane(GL_CLIP_PLANE1, [-1., 0., 0., 251.]);
+    glClipPlane(GL_CLIP_PLANE2, [ 0., 1., 0., 251.]);
+    glClipPlane(GL_CLIP_PLANE3, [ 0.,-1., 0., 251.]);
+    glClipPlane(GL_CLIP_PLANE4, [ 0., 0., 1., 251.]);
+    glClipPlane(GL_CLIP_PLANE5, [ 0., 0.,-1., 251.]);
 
     glPushMatrix()
     color = [1.,1.,1.,1]
@@ -116,6 +130,7 @@ def keypressed(*args):
     global move_mode
     global new_rock_mode
     global mTexture
+    global originalTexture
 
     if new_rock_mode:
         if args[0] == '1':
@@ -152,10 +167,10 @@ def keypressed(*args):
             move_mode = 2
 
         elif args[0] == 'l':
-            if (-texture_size / 2.) < (new_center[move_mode] - new_radius[move_mode]):
+            if (-texture_size / 2.) < new_center[move_mode]:
                 new_center[move_mode] -= 1
         elif args[0] == 'o':
-            if (texture_size / 2.) > (new_center[move_mode] + new_radius[move_mode]):
+            if (texture_size / 2.) > new_center[move_mode]:
                 new_center[move_mode] += 1
         elif args[0] == 'k':
             new_rotation[move_mode] -= 1
@@ -171,6 +186,7 @@ def keypressed(*args):
                 new_center = [0., 0., 0.]
                 new_rotation = [randint(0,360), randint(0,360), randint(0,360)]
                 new_rock_mode = False
+                originalTexture = mTexture
 
         glutPostRedisplay()
 
@@ -178,8 +194,9 @@ def keypressed(*args):
         if args[0] == 'n':
             new_rock_mode = True
         elif args[0] == 'P':
-            mTexture.learn()
-            mTexture = mTexture.sample()
+            originalTexture.learn()
+            mTexture = originalTexture.sample()
+
         glutPostRedisplay()
 
         

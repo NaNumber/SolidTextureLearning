@@ -1,5 +1,7 @@
 
 import numpy as np
+from random import randint
+from random import uniform
 
 width = 500.0
 height = 500.0
@@ -103,5 +105,13 @@ def dataToRock3D(data):
 	rotation.append(data[9]*rotation_max % 360)
 	rotation.append(data[10]*rotation_max % 360)
 	rotation.append(data[11]*rotation_max % 360)
+
+	return Rock3D(center, radius, color, rotation)
+
+def randomRock3D(size_texture):
+	radius = [randint(10,90), randint(10,90), randint(10,90)]
+	color = [uniform(0,1),uniform(0,1),uniform(0,1),1.]
+	center = [randint(-size_texture/2,size_texture/2), randint(-size_texture/2,size_texture/2), randint(-size_texture/2,size_texture/2)]
+	rotation = [randint(0,360), randint(0,360), randint(0,360)]
 
 	return Rock3D(center, radius, color, rotation)

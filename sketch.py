@@ -21,7 +21,9 @@ def sketch():
 	radius = 1
 	color = (0,0,255)
 
+
 	new_texture = texture.Texture()
+	originalTexture = texture.Texture()
 
 	while True: #main game loop
 
