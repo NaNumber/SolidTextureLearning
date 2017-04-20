@@ -6,9 +6,10 @@ import texture
 import rock
 from random import randint
 from random import uniform
+import tkFileDialog
 
 
-name = 'ball_glut'
+name = 'texture'
 
 texture_size = 500
 
@@ -26,19 +27,28 @@ last_y = 0
 x_rot = 0
 y_rot = 0
 
-#mTexture = texture.Texture3D()
-mTexture = texture.createRandomTexture(500, 50)
+mTexture = texture.Texture3D(texture_size)
 originalTexture = mTexture
 
-def sketch(pTexture=None):
+def sketch(pTexture=None, t_size=500, window_size =1000, random_texture_size=None):
+    global texture_size
+    global mTexture
+    global originalTexture
+    
     if pTexture != None:
         mTexture = pTexture
     else: 
-        mTexture = texture.Texture3D()
+        originalTexture = mTexture = texture.Texture3D(t_size)
+
+    if random_texture_size != None:
+        originalTexture = mTexture = texture.createRandomTexture(t_size, random_texture_size)
+
+    rock.setTextureSize(t_size)
+    texture_size = t_size
 
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
-    glutInitWindowSize(2000,2000)
+    glutInitWindowSize(window_size,window_size)
     glutCreateWindow(name)
 
     glClearColor(1.,1.,1.,1.)
@@ -53,12 +63,12 @@ def sketch(pTexture=None):
     glEnable(GL_CLIP_PLANE3)
     glEnable(GL_CLIP_PLANE4)
     glEnable(GL_CLIP_PLANE5)
-    lightZeroPosition = [100,50,100,1.]
+    lightZeroPosition = [t_size/5,t_size/10,t_size/5,1.]
     lightZeroColor = [0.8,1.0,0.8,1.0] #green tinged
     glLightfv(GL_LIGHT0, GL_POSITION, lightZeroPosition)
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightZeroColor)
-    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.001)
-    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.001)
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightZeroColor)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5/t_size)
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.5/t_size)
     glEnable(GL_LIGHT0)
     glutDisplayFunc(display)
     if pTexture == None:
@@ -66,9 +76,9 @@ def sketch(pTexture=None):
     glutMotionFunc(mouseMotion)
     glutMouseFunc(click)
     glMatrixMode(GL_PROJECTION)
-    gluPerspective(40.,1.,1.,2000.)
+    gluPerspective(40.,1.,1.,t_size*4)
     glMatrixMode(GL_MODELVIEW)
-    gluLookAt(1000,500,1000,
+    gluLookAt(t_size*2,t_size,t_size*2,
               0,0,0,
               0,1,0)
     glPushMatrix()
@@ -83,12 +93,12 @@ def display():
     global new_rotation
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-    glClipPlane(GL_CLIP_PLANE0, [ 1., 0., 0., 251.]);
-    glClipPlane(GL_CLIP_PLANE1, [-1., 0., 0., 251.]);
-    glClipPlane(GL_CLIP_PLANE2, [ 0., 1., 0., 251.]);
-    glClipPlane(GL_CLIP_PLANE3, [ 0.,-1., 0., 251.]);
-    glClipPlane(GL_CLIP_PLANE4, [ 0., 0., 1., 251.]);
-    glClipPlane(GL_CLIP_PLANE5, [ 0., 0.,-1., 251.]);
+    glClipPlane(GL_CLIP_PLANE0, [ 1., 0., 0., texture_size/2.+1]);
+    glClipPlane(GL_CLIP_PLANE1, [-1., 0., 0., texture_size/2.+1]);
+    glClipPlane(GL_CLIP_PLANE2, [ 0., 1., 0., texture_size/2.+1]);
+    glClipPlane(GL_CLIP_PLANE3, [ 0.,-1., 0., texture_size/2.+1]);
+    glClipPlane(GL_CLIP_PLANE4, [ 0., 0., 1., texture_size/2.+1]);
+    glClipPlane(GL_CLIP_PLANE5, [ 0., 0.,-1., texture_size/2.+1]);
 
     glPushMatrix()
     color = [1.,1.,1.,1]
@@ -178,7 +188,6 @@ def keypressed(*args):
             new_rotation[move_mode] += 1
 
         elif args[0] == 'a':
-            print new_rotation
             if mTexture.add(rock.Rock3D(new_center, new_radius, new_color, new_rotation)):
                 new_radius = [randint(10,90), randint(10,90), randint(10,90)]
                 new_color = [uniform(0,1),uniform(0,1),uniform(0,1),1.]
@@ -193,6 +202,8 @@ def keypressed(*args):
     else:
         if args[0] == 'n':
             new_rock_mode = True
+        elif args[0] == 'S':
+            file_save(originalTexture)
         elif args[0] == 'P':
             originalTexture.learn()
             mTexture = originalTexture.sample()
@@ -223,6 +234,13 @@ def mouseMotion (x, y):
     last_y = y
 
     glRotatef( x_rot, 0.0, 1.0, 0.0 )
-    #glRotatef( y_rot, 1.0, 0.0, 0.0 )
-
+    
     glutPostRedisplay()
+
+def file_save(texture):
+    f = tkFileDialog.asksaveasfile(mode='w', defaultextension=".te", initialdir='textures')
+    if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
+        return
+    text2save = texture.toString()
+    f.write(text2save)
+    f.close()

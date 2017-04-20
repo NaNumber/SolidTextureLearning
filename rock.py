@@ -3,9 +3,7 @@ import numpy as np
 from random import randint
 from random import uniform
 
-width = 500.0
-height = 500.0
-depth = 500.0
+t_size = 500.0
 radius_max = 100.0
 color_max = 255.
 rotation_max = 360.
@@ -18,8 +16,8 @@ class Rock:
 
 		min_center = np.copy(center)
 		min_center = min_center*1.
-		min_center[0] = center[0]/width
-		min_center[1] = center[1]/height
+		min_center[0] = center[0]/t_size
+		min_center[1] = center[1]/t_size
 
 		min_color = np.copy(color)
 		min_color = min_color*1.
@@ -37,8 +35,8 @@ class Rock:
 def dataToRock(data):
 	center = []
 	color = []
-	center.append(int(max(0, data[0]*width)))
-	center.append(int(max(0, data[1]*height)))
+	center.append(int(max(0, data[0]*t_size)))
+	center.append(int(max(0, data[1]*t_size)))
 	radius = int(max(0, data[2]*radius_max))
 	color.append(max(0, min(int(data[3]*color_max), 255)))
 	color.append(max(0, min(int(data[4]*color_max), 255)))
@@ -55,9 +53,9 @@ class Rock3D:
 
 		min_center = np.copy(center)
 		min_center = min_center*1.
-		min_center[0] = center[0]/width
-		min_center[1] = center[1]/height
-		min_center[2] = center[2]/depth
+		min_center[0] = center[0]/t_size
+		min_center[1] = center[1]/t_size
+		min_center[2] = center[2]/t_size
 
 		min_radius = np.copy(center)
 		min_radius = min_radius*1.
@@ -84,7 +82,6 @@ class Rock3D:
 		self.min_rotation = min_rotation
 
 	def data(self):
-		print self.min_rotation
 		return np.array(self.min_center.tolist() + self.min_radius.tolist() + self.min_color.tolist() + self.min_rotation.tolist())
 
 def dataToRock3D(data):
@@ -92,9 +89,9 @@ def dataToRock3D(data):
 	color = []
 	radius = []
 	rotation = []
-	center.append(data[0]*width)
-	center.append(data[1]*height)
-	center.append(data[2]*depth)
+	center.append(data[0]*t_size)
+	center.append(data[1]*t_size)
+	center.append(data[2]*t_size)
 	radius.append(max(0, data[3]*radius_max))
 	radius.append(max(0, data[4]*radius_max))
 	radius.append(max(0, data[5]*radius_max))
@@ -115,3 +112,7 @@ def randomRock3D(size_texture):
 	rotation = [randint(0,360), randint(0,360), randint(0,360)]
 
 	return Rock3D(center, radius, color, rotation)
+
+def setTextureSize(new_size):
+	global t_size
+	t_size = new_size
