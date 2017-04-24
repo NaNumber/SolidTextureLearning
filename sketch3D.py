@@ -7,6 +7,7 @@ import rock
 from random import randint
 from random import uniform
 import tkFileDialog
+import time
 
 
 name = 'texture'
@@ -36,7 +37,7 @@ def sketch(pTexture=None, t_size=500, window_size =1000, random_texture_size=Non
     global originalTexture
     
     if pTexture != None:
-        mTexture = pTexture
+        originalTexture = mTexture = pTexture
     else: 
         originalTexture = mTexture = texture.Texture3D(t_size)
 
@@ -71,8 +72,7 @@ def sketch(pTexture=None, t_size=500, window_size =1000, random_texture_size=Non
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.5/t_size)
     glEnable(GL_LIGHT0)
     glutDisplayFunc(display)
-    if pTexture == None:
-        glutKeyboardFunc(keypressed)
+    glutKeyboardFunc(keypressed)
     glutMotionFunc(mouseMotion)
     glutMouseFunc(click)
     glMatrixMode(GL_PROJECTION)
@@ -141,6 +141,7 @@ def keypressed(*args):
     global new_rock_mode
     global mTexture
     global originalTexture
+
 
     if new_rock_mode:
         if args[0] == '1':
