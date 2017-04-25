@@ -72,9 +72,9 @@ class Texture3D:
 		if length == None:
 			length = len(self.data)
 
-		mtexture = Texture3D(self.size*10)
+		mtexture = Texture3D(self.size)
 		i=0
-		while i < length*10:
+		while i < length:
 			new_rock = rock.dataToRock3D(self.kde.sample(1, random_state=None)[0])
 
 			if mtexture.add(new_rock):
