@@ -12,8 +12,10 @@ import time
 
 name = 'texture'
 
+#default texture size
 texture_size = 500
 
+#properties for random rock in the middle of the texture. 
 new_radius = [randint(10,90), randint(10,90), randint(10,90)]
 new_color = [uniform(0,1),uniform(0,1),uniform(0,1),1.]
 move_mode = 0
@@ -47,6 +49,8 @@ def sketch(pTexture=None, t_size=500, window_size =1000, random_texture_size=Non
     rock.setTextureSize(t_size)
     texture_size = t_size
 
+
+    #OpenGL setup
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(window_size,window_size)
@@ -92,6 +96,7 @@ def display():
     global new_rock_mode
     global new_rotation
 
+    #clipplanes around the texture 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glClipPlane(GL_CLIP_PLANE0, [ 1., 0., 0., texture_size/2.+1]);
     glClipPlane(GL_CLIP_PLANE1, [-1., 0., 0., texture_size/2.+1]);
@@ -100,6 +105,7 @@ def display():
     glClipPlane(GL_CLIP_PLANE4, [ 0., 0., 1., texture_size/2.+1]);
     glClipPlane(GL_CLIP_PLANE5, [ 0., 0.,-1., texture_size/2.+1]);
 
+    #the cube around the texture
     glPushMatrix()
     color = [1.,1.,1.,1]
     glMaterialfv(GL_FRONT,GL_DIFFUSE,color)
@@ -107,7 +113,9 @@ def display():
     glutWireCube(texture_size)
     glPopMatrix()
 
+
     if new_rock_mode:
+        #The new rock we want to add
         glPushMatrix()
         glMaterialfv(GL_FRONT,GL_DIFFUSE, new_color)
         glTranslatef(new_center[0], new_center[1], new_center[2])
@@ -118,6 +126,7 @@ def display():
         glutSolidSphere(1,50,50)
         glPopMatrix()
 
+    #all the rocks in the texture
     for rock in mTexture.rocks:
         glPushMatrix()
         glMaterialfv(GL_FRONT,GL_DIFFUSE, rock.color.tolist() + [1.])
@@ -190,6 +199,7 @@ def keypressed(*args):
 
         elif args[0] == 'a':
             if mTexture.add(rock.Rock3D(new_center, new_radius, new_color, new_rotation)):
+                print 'Added!'
                 new_radius = [randint(10,90), randint(10,90), randint(10,90)]
                 new_color = [uniform(0,1),uniform(0,1),uniform(0,1),1.]
                 move_mode = 0
@@ -197,6 +207,11 @@ def keypressed(*args):
                 new_rotation = [randint(0,360), randint(0,360), randint(0,360)]
                 new_rock_mode = False
                 originalTexture = mTexture
+
+        elif args[0] == 'S':
+            print 'Please add the last rock before saving texture'
+        elif args[0] == 'P':
+            print 'Please add the last rock before generating new texture'
 
         glutPostRedisplay()
 

@@ -8,6 +8,9 @@ radius_max = 100.0
 color_max = 255.
 rotation_max = 360.
 
+'''
+2D rock:
+'''
 class Rock:
 	def __init__(self, center, radius, color):
 		self.center = np.array(center)
@@ -32,6 +35,9 @@ class Rock:
 	def data(self):
 		return np.array(self.min_center.tolist() + [self.min_radius] + self.min_color.tolist())
 
+'''
+returns 2D rock from the data form
+'''
 def dataToRock(data):
 	center = []
 	color = []
@@ -84,6 +90,9 @@ class Rock3D:
 	def data(self):
 		return np.array(self.min_center.tolist() + self.min_radius.tolist() + self.min_color.tolist() + self.min_rotation.tolist())
 
+'''
+returns 2D rock from the data form
+'''
 def dataToRock3D(data):
 	center = []
 	color = []
